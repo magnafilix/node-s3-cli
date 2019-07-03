@@ -47,23 +47,24 @@ if (FLAG === '--upload' && ARGV_3)
   })
 
 //---> DELETE FILES BY PREFIX
-if (FLAG === '--delete' && ARGV_3) {
-  return S3.deleteObjects(
-    {
-      Bucket: BUCKET_NAME,
-      Delete: {
-        Objects: [
-          {
-            Key: ARGV_3
+if (FLAG === '--delete' && ARGV_3)
+  return S3.listObjects({ Bucket: BUCKET_NAME, Prefix: ARGV_3 }, (err, files) => {
+    if (err) throw err
+    if (files && files.Contents) {
+      const keysToRemove = files.Contents.map(file => ({ Key: file.Key }))
+      S3.deleteObjects(
+        {
+          Bucket: BUCKET_NAME,
+          Delete: {
+            Objects: keysToRemove
           }
-        ]
-      }
-    }, (err, res) => {
-      if (err) throw err
-      console.log(res)
+        }, (err, res) => {
+          if (err) throw err
+          console.log(res)
+        }
+      )
     }
-  )
-}
+  })
 
 //---> WRONG COMMAND HANDLER
 console.log(`The command was not recognized`.bgRed)
