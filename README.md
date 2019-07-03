@@ -1,8 +1,12 @@
 # node-s3-cli
 
-## Commands
+## commands
+
+avoid using these [], they are only to show where info should be put
 
 ```bash
--lf
--uf [ local file path ]
+--list
+--list [prefix]
+--upload [local file path]
+--delete [prefix]
 ```

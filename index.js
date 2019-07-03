@@ -8,26 +8,34 @@ const S3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
+const BUCKET_NAME = 'lcloud-427-ts'
 const FLAG = process.argv[2]
-const NAMEorPATH = process.argv[3]
+const ARGV_3 = process.argv[3]
 
-//---> LISTING FILES FROM A BUCKET
-if (FLAG === '-lf')
-  return S3.listObjects({ Bucket: (NAMEorPATH || 'lcloud-427-ts') }, (err, files) => {
+//---> LIST BUCKET FILES
+if (FLAG === '--list' && !ARGV_3)
+  return S3.listObjects({ Bucket: BUCKET_NAME }, (err, files) => {
     if (err) throw err
     console.log(files)
   })
 
+//---> LIST FILES BY PREFIX
+if (FLAG === '--list' && ARGV_3)
+  return S3.listObjects({ Bucket: BUCKET_NAME, Prefix: ARGV_3 }, (err, files) => {
+    if (err) throw err
+    console.log(files)
+  })
 
-if (FLAG === '-uf' && NAMEorPATH)
-  return fs.readFile(NAMEorPATH, (err, file) => {
+//---> UPLOAD LOCAL FILE TO BUCKET
+if (FLAG === '--upload' && ARGV_3)
+  return fs.readFile(ARGV_3, (err, file) => {
     if (err) throw err
 
-    const pathHasSlash = NAMEorPATH.indexOf('/') > -1
-    const fileName = pathHasSlash && NAMEorPATH.split('/').pop()
+    const pathHasSlash = ARGV_3.indexOf('/') > -1
+    const fileName = pathHasSlash && ARGV_3.split('/').pop()
 
     const params = {
-      Bucket: 'lcloud-427-ts',
+      Bucket: BUCKET_NAME,
       Key: (fileName || `file(${new Date().toJSON()})`),
       Body: JSON.stringify(file, null, 2)
     }
@@ -37,6 +45,25 @@ if (FLAG === '-uf' && NAMEorPATH)
       console.log(`File uploaded successfully at ${data.Location}`.bgGreen)
     })
   })
+
+//---> DELETE FILES BY PREFIX
+if (FLAG === '--delete' && ARGV_3) {
+  return S3.deleteObjects(
+    {
+      Bucket: BUCKET_NAME,
+      Delete: {
+        Objects: [
+          {
+            Key: ARGV_3
+          }
+        ]
+      }
+    }, (err, res) => {
+      if (err) throw err
+      console.log(res)
+    }
+  )
+}
 
 //---> WRONG COMMAND HANDLER
 console.log(`The command was not recognized`.bgRed)
