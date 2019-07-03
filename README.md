@@ -10,3 +10,9 @@ avoid using these [], they are only to show where info should be put
 --upload [local file path]
 --delete [prefix]
 ```
+
+live example
+
+```bash
+node index --upload ~/Desktop/file.docx
+```
