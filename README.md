@@ -6,13 +6,16 @@ avoid using these [], they are only to show where info should be put
 
 ```bash
 --list
---list [prefix]
+--list [search-word]
 --upload [local file path]
---delete [prefix]
+--delete [search-word]
 ```
 
 live example
 
 ```bash
+node index --list
+node index --list file
 node index --upload ~/Desktop/file.docx
+node index --delete file
 ```
