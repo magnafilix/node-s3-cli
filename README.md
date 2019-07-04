@@ -6,9 +6,9 @@ avoid using these [], they are only to show where info should be put
 
 ```bash
 --list
---list [search-word]
+--list [match-word]
 --upload [local file path]
---delete [search-word]
+--delete [match-word]
 ```
 
 live example
