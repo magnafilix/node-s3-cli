@@ -10,7 +10,6 @@ const S3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
-const BUCKET_NAME = 'lcloud-427-ts'
 const FLAG = process.argv[2]
 const ARGV_3 = process.argv[3]
 
@@ -19,7 +18,7 @@ const listAllBucketFiles = async () => {
   let marker;
 
   while (isTruncated) {
-    let params = { Bucket: BUCKET_NAME };
+    let params = { Bucket: process.env.BUCKET_NAME };
     if (marker) params.Marker = marker;
 
     try {
@@ -42,7 +41,7 @@ const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
   const fileName = pathHasSlash && ARGV_3.split('/').pop()
 
   const params = {
-    Bucket: BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME,
     Key: (fileName || `file(${new Date().toJSON()})`),
     Body: JSON.stringify(file, null, 2)
   }
@@ -60,7 +59,7 @@ const listFilesByMatch = async () => {
   const matchedFilesKeys = []
 
   while (isTruncated) {
-    let params = { Bucket: BUCKET_NAME };
+    let params = { Bucket: process.env.BUCKET_NAME };
     if (marker) params.Marker = marker;
 
     try {
@@ -83,7 +82,7 @@ const deleteFilesByMatch = async () => {
 
   S3.deleteObjects(
     {
-      Bucket: BUCKET_NAME,
+      Bucket: process.env.BUCKET_NAME,
       Delete: {
         Objects: keysToRemove
       }
