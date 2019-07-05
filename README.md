@@ -2,7 +2,8 @@
 
 ## commands
 
-avoid using these [], they are only to show where info should be put
+avoid using these []  
+they are only to show where info should be put
 
 ```bash
 --list
@@ -11,7 +12,7 @@ avoid using these [], they are only to show where info should be put
 --delete [match-word]
 ```
 
-live example
+live examples
 
 ```bash
 node index --list

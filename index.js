@@ -15,12 +15,12 @@ const FLAG = process.argv[2]
 const ARGV_3 = process.argv[3]
 
 const listAllBucketFiles = async () => {
-  let isTruncated = true;
-  let marker;
+  let isTruncated = true
+  let marker
 
   while (isTruncated) {
-    let params = { Bucket: BUCKET };
-    if (marker) params.Marker = marker;
+    const params = { Bucket: BUCKET }
+    if (marker) params.Marker = marker
 
     try {
       const response = await S3.listObjects(params).promise()
@@ -30,7 +30,7 @@ const listAllBucketFiles = async () => {
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
 
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 }
@@ -54,14 +54,14 @@ const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
 })
 
 const listFilesByMatch = async () => {
-  let isTruncated = true;
-  let marker;
+  let isTruncated = true
+  let marker
 
   const matchedFilesKeys = []
 
   while (isTruncated) {
-    let params = { Bucket: BUCKET };
-    if (marker) params.Marker = marker;
+    const params = { Bucket: BUCKET }
+    if (marker) params.Marker = marker
 
     try {
       const response = await S3.listObjects(params).promise()
@@ -71,7 +71,7 @@ const listFilesByMatch = async () => {
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
 
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
