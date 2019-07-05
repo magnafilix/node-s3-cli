@@ -13,6 +13,7 @@ const S3 = new AWS.S3({
 const BUCKET = process.env.BUCKET_NAME
 const FLAG = process.argv[2]
 const ARGV_3 = process.argv[3]
+const ARGV_4 = process.argv[4]
 
 const listAllBucketFiles = async () => {
   let isTruncated = true
@@ -65,7 +66,11 @@ const listFilesByMatch = async () => {
 
     try {
       const response = await S3.listObjects(params).promise()
-      response.Contents.forEach(item => item.Key.includes(ARGV_3) && matchedFilesKeys.push({ Key: item.Key }))
+
+      const regexFlags = ARGV_4 || 'g'
+      const regex = new RegExp(ARGV_3, regexFlags)
+
+      response.Contents.forEach(item => item.Key.match(regex) && matchedFilesKeys.push({ Key: item.Key }))
 
       isTruncated = response.IsTruncated
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
