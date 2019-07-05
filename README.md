@@ -7,9 +7,9 @@ they are only to show where info should be put
 
 ```bash
 --list
---list [regex, without //] [optional regex flags, default flag  'g']
+--list [regex, not /regex/] [regex flags]
 --upload [local file path]
---delete [regex, without //] [optional regex flags, default flag is 'g']
+--delete [regex, not /regex/] [regex flags]
 ```
 
 live examples

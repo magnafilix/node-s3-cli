@@ -67,7 +67,7 @@ const listFilesByMatch = async () => {
     try {
       const response = await S3.listObjects(params).promise()
 
-      const regexFlags = ARGV_4 || 'g'
+      const regexFlags = ARGV_4
       const regex = new RegExp(ARGV_3, regexFlags)
 
       response.Contents.forEach(item => item.Key.match(regex) && matchedFilesKeys.push({ Key: item.Key }))
