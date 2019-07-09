@@ -31,13 +31,13 @@ const listAllBucketFiles = async () => {
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
 
     } catch (error) {
-      throw error
+      console.log(error)
     }
   }
 }
 
 const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
-  if (err) throw err
+  if (err) return console.log(err)
 
   const pathHasSlash = ARGV_3.indexOf('/') > -1
   const fileName = pathHasSlash && ARGV_3.split('/').pop()
@@ -49,7 +49,7 @@ const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
   }
 
   S3.upload(params, (err, data) => {
-    if (err) throw err
+    if (err) return console.log(err)
     console.log(`File uploaded successfully at ${data.Location}`.bgGreen)
   })
 })
@@ -76,7 +76,7 @@ const listFilesByMatch = async () => {
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
 
     } catch (error) {
-      throw error
+      console.log(error)
     }
   }
 
@@ -93,7 +93,7 @@ const deleteFilesByMatch = async () => {
         Objects: keysToRemove
       }
     }, (err, res) => {
-      if (err) throw err
+      if (err) return console.log(err)
       console.log(res)
     }
   )
