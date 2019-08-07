@@ -15,27 +15,6 @@ const FLAG = process.argv[2]
 const ARGV_3 = process.argv[3]
 const ARGV_4 = process.argv[4]
 
-const listAllBucketFiles = async () => {
-  let isTruncated = true
-  let marker
-
-  while (isTruncated) {
-    const params = { Bucket: BUCKET }
-    if (marker) params.Marker = marker
-
-    try {
-      const response = await S3.listObjects(params).promise()
-      response.Contents.forEach(item => console.log(`${item.Key}`.cyan))
-
-      isTruncated = response.IsTruncated
-      if (isTruncated) marker = response.Contents.slice(-1)[0].Key
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-}
-
 const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
   if (err) return console.log(err)
 
@@ -54,11 +33,9 @@ const uploadFileToBucket = () => fs.readFile(ARGV_3, (err, file) => {
   })
 })
 
-const listFilesByMatch = async () => {
+const listFiles = async (byMatch = false) => {
   let isTruncated = true
   let marker
-
-  const matchedFilesKeys = []
 
   while (isTruncated) {
     const params = { Bucket: BUCKET }
@@ -67,10 +44,14 @@ const listFilesByMatch = async () => {
     try {
       const response = await S3.listObjects(params).promise()
 
-      const regexFlags = ARGV_4
-      const regex = new RegExp(ARGV_3, regexFlags)
+      if (byMatch) {
+        const regexFlags = ARGV_4
+        const regex = new RegExp(ARGV_3, regexFlags)
 
-      response.Contents.forEach(item => item.Key.match(regex) && matchedFilesKeys.push({ Key: item.Key }))
+        response.Contents.forEach(item => item.Key.match(regex) && console.log(`${item.Key}`.cyan))
+      } else {
+        response.Contents.forEach(item => console.log(`${item.Key}`.cyan))
+      }
 
       isTruncated = response.IsTruncated
       if (isTruncated) marker = response.Contents.slice(-1)[0].Key
@@ -79,8 +60,6 @@ const listFilesByMatch = async () => {
       console.log(error)
     }
   }
-
-  return matchedFilesKeys
 }
 
 const deleteFilesByMatch = async () => {
@@ -100,13 +79,13 @@ const deleteFilesByMatch = async () => {
 }
 
 //---> LIST ALL BUCKET FILES
-if (FLAG === '--list' && !ARGV_3) return listAllBucketFiles()
+if (FLAG === '--list' && !ARGV_3) return listFiles()
 
 //---> UPLOAD LOCAL FILE TO A BUCKET
 if (FLAG === '--upload' && ARGV_3) return uploadFileToBucket()
 
 //---> LIST FILES FILTERED/MATCHED
-if (FLAG === '--list' && ARGV_3) return listFilesByMatch().then(files => console.log(files))
+if (FLAG === '--list' && ARGV_3) return listFiles(true)
 
 //---> DELETE FILES FILTERED/MATCHED
 if (FLAG === '--delete' && ARGV_3) return deleteFilesByMatch()
